@@ -1,0 +1,41 @@
+open db
+C:\sqlite-tools-win-x64-3460100\sqlite3.exe database.db
+
+db sql statements
+CREATE TABLE activities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    mobile_time INTEGER,   -- in Minuten
+    steps INTEGER,
+    gym INTEGER,           -- 1 für Gym besucht, 0 für nicht besucht
+    jogging INTEGER         -- 1 für Joggen, 0 für nicht gejoggt
+);
+
+INSERT INTO activities (date, mobile_time, steps, gym, jogging)
+VALUES 
+('2024-09-15', 120, 5000, 1, 0),
+('2024-09-16', 90, 3000, 0, 1),
+('2024-09-17', 150, 8000, 1, 1),
+('2024-09-18', 60, 4000, 0, 0),
+('2024-09-19', 180, 10000, 1, 0),
+('2024-09-20', 200, 6000, 0, 1),
+('2024-09-21', 240, 7000, 1, 1);
+
+
+CREATE TABLE runs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT NOT NULL,
+    pace DECIMAL(5, 2)     -- Kommazahl mit maximal 3 Stellen vor und 2 Stellen nach dem Komma
+);
+
+INSERT INTO runs (date, pace)
+VALUES 
+('2024-09-15', 5.20),
+('2024-09-16', 4.85),
+('2024-09-17', 6.15);
+
+INSERT INTO liftings (date, volumes)
+VALUES 
+('2024-09-15', 500),
+('2024-09-16', 700),
+('2024-09-17', 870);

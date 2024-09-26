@@ -1,0 +1,3 @@
+In ES6-Modulen muss die Dateiendung .js explizit angegeben werden. 
+
+default-exporte dürfen nicht umbenannt werden
