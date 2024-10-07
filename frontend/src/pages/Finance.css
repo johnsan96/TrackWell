@@ -1,0 +1,53 @@
+.Finance {
+    background-color: #4d6bdd; 
+    padding: 4em;
+    width: 80%; /* Optionale Breite */
+    max-width: 600px; /* Maximale Breite */
+    position: absolute; /* Setze die Position auf absolut */
+    top: 50%; /* Positioniere es 50% von oben */
+    left: 50%; /* Positioniere es 50% von links */
+    transform: translate(-50%, -50%); /* Verschiebe es um die Hälfte seiner Breite und Höhe zurück */
+    border-radius: 10px; /* Abgerundete Ecken (optional) */
+}
+
+h3, p, h2, li, label {
+    color: #ffffff
+}
+
+.forms {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 2rem
+}
+
+.forms .form {
+    border: solid 2px black;
+    padding: 5px;
+    display: flex;
+    flex-direction: column; 
+    gap: 5px
+}
+
+.form button {
+
+}
+
+.delete-button {
+    font-size: 12px; /* Kleinere Schrift */
+    padding: 2px 5px; /* Weniger Padding */
+    background-color: black; /* Rote Hintergrundfarbe */
+    color: white; /* Weiße Schriftfarbe */
+    border: none; /* Keine Umrandung */
+    border-radius: 3px; /* Abgerundete Ecken */
+    cursor: pointer; /* Zeiger als Cursor */
+    margin-right: 5px;
+}
+
+.delete-button:hover {
+    background-color: darkred; /* Farbe beim Hover-Effekt */
+}
+
+ul {
+    list-style-type: none;
+  }
