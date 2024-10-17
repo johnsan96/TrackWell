@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Finance.css';
+import FormFinance from '../components/FormFinance';
 
 interface Transaction {
     name: string;
@@ -7,27 +8,20 @@ interface Transaction {
 }
 
 function Finance() {
-    // State to hold account balance
     const [balance, setBalance] = useState<number>(0);
 
-    // State to hold expenses (an array of expense objects)
     const [expenses, setExpenses] = useState<Transaction[]>([]);
 
-    // State to hold incomes (an array of income objects)
     const [incomes, setIncomes] = useState<Transaction[]>([]);
 
-    // State to hold new expense details
     const [expenseName, setExpenseName] = useState<string>('');
     const [expenseAmount, setExpenseAmount] = useState<string>('');
 
-    // State to hold new income details
     const [incomeName, setIncomeName] = useState<string>('');
     const [incomeAmount, setIncomeAmount] = useState<string>('');
 
-    // Get current date
     const [date, setDate] = useState<string>(new Date().toLocaleDateString());
 
-    // Load data from localStorage when the component mounts
     useEffect(() => {
         const storedBalance = localStorage.getItem('balance');
         const storedExpenses = localStorage.getItem('expenses');
@@ -44,31 +38,28 @@ function Finance() {
         }
     }, []);
 
-    // Function to handle adding a new expense
     const addExpense = () => {
         if (expenseName && expenseAmount) {
             const newExpense = { name: expenseName, amount: parseFloat(expenseAmount) };
-            const updatedExpenses = [...expenses, newExpense]; // Add new expense to the list
-            setExpenses(updatedExpenses); // Update the state
-            localStorage.setItem('expenses', JSON.stringify(updatedExpenses)); // Update Local Storage
-            setExpenseName(''); // Reset input fields
+            const updatedExpenses = [...expenses, newExpense]; 
+            setExpenses(updatedExpenses); 
+            localStorage.setItem('expenses', JSON.stringify(updatedExpenses)); 
+            setExpenseName(''); 
             setExpenseAmount('');
         }
     };
 
-    // Function to handle adding a new income
     const addIncome = () => {
         if (incomeName && incomeAmount) {
             const newIncome = { name: incomeName, amount: parseFloat(incomeAmount) };
-            const updatedIncomes = [...incomes, newIncome]; // Add new income to the list
-            setIncomes(updatedIncomes); // Update the state
-            localStorage.setItem('incomes', JSON.stringify(updatedIncomes)); // Update Local Storage
-            setIncomeName(''); // Reset input fields
+            const updatedIncomes = [...incomes, newIncome]; 
+            setIncomes(updatedIncomes); 
+            localStorage.setItem('incomes', JSON.stringify(updatedIncomes)); 
+            setIncomeName(''); 
             setIncomeAmount('');
         }
     };
 
-    // Clear all data
     const clearAllData = () => {
         setBalance(0);
         setExpenses([]);
@@ -78,28 +69,20 @@ function Finance() {
         localStorage.removeItem('incomes');
     };
 
-    // Funktion zum Löschen einer Einnahme
     const deleteIncome = (indexToDelete: number) => {
         const updatedIncomes = incomes.filter((_, index) => index !== indexToDelete);
-        setIncomes(updatedIncomes); // Update state
-        localStorage.setItem('incomes', JSON.stringify(updatedIncomes)); // Update Local Storage
+        setIncomes(updatedIncomes); 
+        localStorage.setItem('incomes', JSON.stringify(updatedIncomes)); 
     };
 
-    // Funktion zum Löschen einer Ausgabe
     const deleteExpense = (indexToDelete: number) => {
         const updatedExpenses = expenses.filter((_, index) => index !== indexToDelete);
-        setExpenses(updatedExpenses); // Update state
-        localStorage.setItem('expenses', JSON.stringify(updatedExpenses)); // Update Local Storage
+        setExpenses(updatedExpenses); 
+        localStorage.setItem('expenses', JSON.stringify(updatedExpenses)); 
     };
 
-
-    // Calculate total expenses
     const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
-
-    // Calculate total incomes
     const totalIncomes = incomes.reduce((total, income) => total + income.amount, 0);
-
-    // Calculate the remaining balance
     const remainingBalance = Math.round((balance + totalIncomes - totalExpenses) * 100) / 100;
 
     return (
@@ -119,44 +102,19 @@ function Finance() {
                 />
             </div>
 
-            <div className='forms'>
-
-                <div className='form'>
-                    <input
-                        type="text"
-                        placeholder="Einnahmen Name"
-                        value={incomeName}
-                        onChange={(e) => setIncomeName(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Betrag"
-                        value={incomeAmount}
-                        onChange={(e) => setIncomeAmount(e.target.value)}
-                    />
-                    <button onClick={addIncome}>Einnahme hinzufügen</button>
-                </div>
-
-
-                <div className='form'>
-                    <input
-                        type="text"
-                        placeholder="Ausgaben Name"
-                        value={expenseName}
-                        onChange={(e) => setExpenseName(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Betrag"
-                        value={expenseAmount}
-                        onChange={(e) => setExpenseAmount(e.target.value)}
-                    />
-                    <button onClick={addExpense}>Ausgabe hinzufügen</button>
-                </div>
-
-            </div>
-
-
+            <FormFinance
+                incomeName={incomeName}
+                expenseName={expenseName}
+                incomeAmount={incomeAmount}
+                expenseAmount={expenseAmount}
+                setIncomeName={setIncomeName}
+                setIncomeAmount={setIncomeAmount}
+                addIncome={addIncome}
+                setExpenseName={setExpenseName}
+                setExpenseAmount={setExpenseAmount}
+                addExpense={addExpense}
+            />
+            
             <h3>Einnahmen</h3>
             <ul>
                 {incomes.map((income, index) => (
@@ -166,7 +124,6 @@ function Finance() {
                     </li>
                 ))}
             </ul>
-            {/*<h3>Gesamtsumme der Einnahmen: {totalIncomes}€</h3> */}
 
             <h3>Vorraussichtliche Ausgaben</h3>
             <ul>
@@ -177,7 +134,6 @@ function Finance() {
                     </li>
                 ))}
             </ul>
-            {/* <h3>Gesamtsumme der Ausgaben: {totalExpenses}€</h3> */}
             <h3>Neuer Kontostand: {remainingBalance}€</h3>
             <button onClick={clearAllData} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white' }}>
                 Alle Daten löschen

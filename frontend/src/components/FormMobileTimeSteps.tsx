@@ -34,8 +34,6 @@ export default function FormMobileTimeSteps() {
         const h = await response.json()
     }
 
-
-
     return (
         <div>
             <h1>Form</h1>
