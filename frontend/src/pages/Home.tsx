@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import '../app.css';
+import '../App.css';
 import { AxisOptions, Chart } from "react-charts";
 import ResizableBox from "../components/ResizableBox";
 import FormMobileTimeSteps from "../components/FormMobileTimeSteps";
