@@ -12,7 +12,7 @@ const Login = () => {
     const [isSigningIn, setIsSigningIn] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
 
-    const onSubmit = async (e) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if(!isSigningIn) {
             setIsSigningIn(true)
@@ -21,7 +21,7 @@ const Login = () => {
         }
     }
 
-    const onGoogleSignIn = (e) => {
+    const onGoogleSignIn = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         if (!isSigningIn) {
             setIsSigningIn(true)

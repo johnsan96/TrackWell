@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
-import { Navigate, Link, useNavigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { doCreateUserWithEmailAndPassword } from '../../firebase/auth'
 import "./Login.css"
 
 const Register = () => {
-
-    const navigate = useNavigate()
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -16,7 +14,7 @@ const Register = () => {
 
     const { userLoggedIn } = useAuth()
 
-    const onSubmit = async (e) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if(!isRegistering) {
             setIsRegistering(true)

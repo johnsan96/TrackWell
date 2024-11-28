@@ -25,9 +25,9 @@ function Finance() {
 
     const [date, setDate] = useState<string>(new Date().toLocaleDateString());
 
-    const { currentUser } = useAuth()
+/*     const { currentUser } = useAuth() */
 
-    const navigate = useNavigate(); 
+/*     const navigate = useNavigate(); */
 
     useEffect(() => {
         const storedBalance = localStorage.getItem('balance');
@@ -48,10 +48,10 @@ function Finance() {
     const addExpense = () => {
         if (expenseName && expenseAmount) {
             const newExpense = { name: expenseName, amount: parseFloat(expenseAmount) };
-            const updatedExpenses = [...expenses, newExpense]; 
-            setExpenses(updatedExpenses); 
-            localStorage.setItem('expenses', JSON.stringify(updatedExpenses)); 
-            setExpenseName(''); 
+            const updatedExpenses = [...expenses, newExpense];
+            setExpenses(updatedExpenses);
+            localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+            setExpenseName('');
             setExpenseAmount('');
         }
     };
@@ -59,10 +59,10 @@ function Finance() {
     const addIncome = () => {
         if (incomeName && incomeAmount) {
             const newIncome = { name: incomeName, amount: parseFloat(incomeAmount) };
-            const updatedIncomes = [...incomes, newIncome]; 
-            setIncomes(updatedIncomes); 
-            localStorage.setItem('incomes', JSON.stringify(updatedIncomes)); 
-            setIncomeName(''); 
+            const updatedIncomes = [...incomes, newIncome];
+            setIncomes(updatedIncomes);
+            localStorage.setItem('incomes', JSON.stringify(updatedIncomes));
+            setIncomeName('');
             setIncomeAmount('');
         }
     };
@@ -78,24 +78,24 @@ function Finance() {
 
     const deleteIncome = (indexToDelete: number) => {
         const updatedIncomes = incomes.filter((_, index) => index !== indexToDelete);
-        setIncomes(updatedIncomes); 
-        localStorage.setItem('incomes', JSON.stringify(updatedIncomes)); 
+        setIncomes(updatedIncomes);
+        localStorage.setItem('incomes', JSON.stringify(updatedIncomes));
     };
 
     const deleteExpense = (indexToDelete: number) => {
         const updatedExpenses = expenses.filter((_, index) => index !== indexToDelete);
-        setExpenses(updatedExpenses); 
-        localStorage.setItem('expenses', JSON.stringify(updatedExpenses)); 
+        setExpenses(updatedExpenses);
+        localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
     };
 
-    const handleSignOut = async () => {
+   /*  const handleSignOut = async () => {
         try {
             await doSignOut();
             navigate('/login'); // Weiterleitung zur Login-Seite
         } catch (error) {
             console.error('Fehler beim Abmelden:', error);
         }
-    };
+    }; */
 
     const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
     const totalIncomes = incomes.reduce((total, income) => total + income.amount, 0);
@@ -103,22 +103,46 @@ function Finance() {
 
     return (
         <div className="Finance">
-            <p style={{ color: 'black' }}>{currentUser.uid}</p>
+            <>
+                {/**
+             * 
+             *    <p style={{ color: 'black' }}>{currentUser?.uid}</p>
           
-            <div className='text-2xl font-bold pt-14'>Hello {currentUser.displayName ? currentUser.displayName : currentUser.email}, you are now logged in.</div>
-            <h2>Kontostand Management</h2>
-            <p>Zuletzt aktualisiert: {date}</p>
+                  <div className='text-2xl font-bold pt-14'>Hello {currentUser?.displayName ? currentUser.displayName : currentUser?.email}, you are now logged in.</div>
+             */}
+            </>
+
+            <h2>Budget-Management</h2>
+       {/*      <p>Zuletzt aktualisiert: {date}</p> */}
             <div>
                 <label>Kontostand: </label>
-                <input
-                    type="number"
-                    value={balance}
-                    onChange={(e) => {
-                        const newBalance = parseFloat(e.target.value);
-                        setBalance(newBalance);
-                        localStorage.setItem('balance', newBalance.toString());
-                    }}
-                />
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <button
+                        onClick={() => {
+                            setBalance(-balance);
+                            localStorage.setItem('balance', (-balance).toString());
+                        }}
+                        style={{
+                            padding: "4px 8px", // Größe anpassen
+                            fontSize: "12px",   // Kleinere Schrift
+                            cursor: "pointer"   // Zeigt Klickbarkeit
+                        }}
+                    >
+                        ±
+                    </button>
+                    <input
+                        type="number"
+                        value={balance}
+                        onChange={(e) => {
+                            const newBalance = parseFloat(e.target.value);
+                            if (!isNaN(newBalance)) {
+                                setBalance(newBalance);
+                                localStorage.setItem('balance', newBalance.toString());
+                            }
+                        }}
+                        style={{ flex: 1 }} // Eingabefeld nimmt den Rest des Platzes ein
+                    />
+                </div>
             </div>
 
             <FormFinance
@@ -133,7 +157,7 @@ function Finance() {
                 setExpenseAmount={setExpenseAmount}
                 addExpense={addExpense}
             />
-            
+
             <h3>Einnahmen</h3>
             <ul>
                 {incomes.map((income, index) => (
@@ -158,9 +182,9 @@ function Finance() {
                 Alle Daten löschen
             </button>
 
-            <button onClick={handleSignOut} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white', marginLeft: '20px' }}>
+          {/*   <button onClick={handleSignOut} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white', marginLeft: '20px' }}>
                 Abmelden
-            </button>
+            </button> */}
         </div>
     );
 }

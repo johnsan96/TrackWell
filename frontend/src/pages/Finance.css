@@ -1,7 +1,7 @@
 .Finance {
     background-color: #4d6bdd; 
     padding: 4em;
-    width: 80%; /* Optionale Breite */
+    width: 100%; /* Optionale Breite */
     max-width: 600px; /* Maximale Breite */
     position: absolute; /* Setze die Position auf absolut */
     top: 50%; /* Positioniere es 50% von oben */
@@ -10,13 +10,21 @@
     border-radius: 10px; /* Abgerundete Ecken (optional) */
 }
 
+/* Stile für kleinere Geräte (Handygröße) */
+@media (max-width: 768px) {
+    .Finance {
+        width: 90%; /* Breite auf 90% des Bildschirms setzen */
+        max-width: none; /* Maximale Breite aufheben */
+        padding: 2em; /* Weniger Padding für kleinere Bildschirme */
+        border-radius: 5px; /* Weniger abgerundete Ecken */
+    }
+}
 h3, p, h2, li, label {
     color: #ffffff
 }
 
 .forms {
-    display: flex;
-    flex-direction: row;
+   
     gap: 10px;
     margin-top: 2rem
 }
@@ -26,7 +34,8 @@ h3, p, h2, li, label {
     padding: 5px;
     display: flex;
     flex-direction: column; 
-    gap: 5px
+    gap: 5px;
+    margin-top: 5px;
 }
 
 .form button {
