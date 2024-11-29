@@ -1,5 +1,12 @@
 import { useState, useEffect } from 'react';
 import './Finance.css';
+import FormFinance from '../components/FormFinance';
+/* import { useAuth } from '../context/AuthContext';
+import { doSignOut } from '../../firebase/auth';
+import { useNavigate } from 'react-router-dom'; */
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Tooltip } from 'bootstrap';
 
 interface Transaction {
     name: string;
@@ -7,31 +14,39 @@ interface Transaction {
 }
 
 function Finance() {
-    // State to hold account balance
     const [balance, setBalance] = useState<number>(0);
 
-    // State to hold expenses (an array of expense objects)
+    // Normale Einnahmen und Ausgaben
     const [expenses, setExpenses] = useState<Transaction[]>([]);
-
-    // State to hold incomes (an array of income objects)
     const [incomes, setIncomes] = useState<Transaction[]>([]);
 
-    // State to hold new expense details
+    // Voraussichtliche Einnahmen und Ausgaben
+    const [potentialExpenses, setPotentialExpenses] = useState<Transaction[]>([]);
+    const [potentialIncomes, setPotentialIncomes] = useState<Transaction[]>([]);
+
     const [expenseName, setExpenseName] = useState<string>('');
     const [expenseAmount, setExpenseAmount] = useState<string>('');
-
-    // State to hold new income details
     const [incomeName, setIncomeName] = useState<string>('');
     const [incomeAmount, setIncomeAmount] = useState<string>('');
 
-    // Get current date
+    const [potentialExpenseName, setPotentialExpenseName] = useState<string>('');
+    const [potentialExpenseAmount, setPotentialExpenseAmount] = useState<string>('');
+    const [potentialIncomeName, setPotentialIncomeName] = useState<string>('');
+    const [potentialIncomeAmount, setPotentialIncomeAmount] = useState<string>('');
+
+    const [showPotentials, setShowPotentials] = useState<boolean>(false);
     const [date, setDate] = useState<string>(new Date().toLocaleDateString());
 
-    // Load data from localStorage when the component mounts
+    /*     const { currentUser } = useAuth() */
+
+    /*     const navigate = useNavigate(); */
+
     useEffect(() => {
         const storedBalance = localStorage.getItem('balance');
         const storedExpenses = localStorage.getItem('expenses');
         const storedIncomes = localStorage.getItem('incomes');
+        const storedPotentialExpenses = localStorage.getItem('potentialExpenses');
+        const storedPotentialIncomes = localStorage.getItem('potentialIncomes');
 
         if (storedBalance) {
             setBalance(parseFloat(storedBalance));
@@ -42,122 +57,233 @@ function Finance() {
         if (storedIncomes) {
             setIncomes(JSON.parse(storedIncomes));
         }
+        if (storedPotentialExpenses) setPotentialExpenses(JSON.parse(storedPotentialExpenses));
+        if (storedPotentialIncomes) setPotentialIncomes(JSON.parse(storedPotentialIncomes));
     }, []);
 
-    // Function to handle adding a new expense
     const addExpense = () => {
         if (expenseName && expenseAmount) {
             const newExpense = { name: expenseName, amount: parseFloat(expenseAmount) };
-            const updatedExpenses = [...expenses, newExpense]; // Add new expense to the list
-            setExpenses(updatedExpenses); // Update the state
-            localStorage.setItem('expenses', JSON.stringify(updatedExpenses)); // Update Local Storage
-            setExpenseName(''); // Reset input fields
+            const updatedExpenses = [...expenses, newExpense];
+            setExpenses(updatedExpenses);
+            localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
+            setExpenseName('');
             setExpenseAmount('');
         }
     };
 
-    // Function to handle adding a new income
     const addIncome = () => {
         if (incomeName && incomeAmount) {
             const newIncome = { name: incomeName, amount: parseFloat(incomeAmount) };
-            const updatedIncomes = [...incomes, newIncome]; // Add new income to the list
-            setIncomes(updatedIncomes); // Update the state
-            localStorage.setItem('incomes', JSON.stringify(updatedIncomes)); // Update Local Storage
-            setIncomeName(''); // Reset input fields
+            const updatedIncomes = [...incomes, newIncome];
+            setIncomes(updatedIncomes);
+            localStorage.setItem('incomes', JSON.stringify(updatedIncomes));
+            setIncomeName('');
             setIncomeAmount('');
         }
     };
 
-    // Clear all data
+    // Hinzufügen von voraussichtlichen Einnahmen/Ausgaben
+    const addPotentialExpense = () => {
+        if (potentialExpenseName && potentialExpenseAmount) {
+            const newExpense = { name: potentialExpenseName, amount: parseFloat(potentialExpenseAmount) };
+            const updatedExpenses = [...potentialExpenses, newExpense];
+            setPotentialExpenses(updatedExpenses);
+            localStorage.setItem('potentialExpenses', JSON.stringify(updatedExpenses));
+            setPotentialExpenseName('');
+            setPotentialExpenseAmount('');
+        }
+    };
+
+    const addPotentialIncome = () => {
+        if (potentialIncomeName && potentialIncomeAmount) {
+            const newIncome = { name: potentialIncomeName, amount: parseFloat(potentialIncomeAmount) };
+            const updatedIncomes = [...potentialIncomes, newIncome];
+            setPotentialIncomes(updatedIncomes);
+            localStorage.setItem('potentialIncomes', JSON.stringify(updatedIncomes));
+            setPotentialIncomeName('');
+            setPotentialIncomeAmount('');
+        }
+    };
+
+    const movePotentialIncomeToIncome = (indexToMove: number) => {
+        const itemToMove = potentialIncomes[indexToMove];
+        const updatedPotentialIncomes = potentialIncomes.filter((_, index) => index !== indexToMove);
+        setPotentialIncomes(updatedPotentialIncomes);
+        setIncomes([...incomes, itemToMove]);
+
+        localStorage.setItem('potentialIncomes', JSON.stringify(updatedPotentialIncomes));
+        localStorage.setItem('incomes', JSON.stringify([...incomes, itemToMove]));
+    };
+
+    const movePotentialExpenseToExpense = (indexToMove: number) => {
+        const itemToMove = potentialExpenses[indexToMove];
+        const updatedPotentialExpenses = potentialExpenses.filter((_, index) => index !== indexToMove);
+        setPotentialExpenses(updatedPotentialExpenses);
+        setExpenses([...expenses, itemToMove]);
+
+        localStorage.setItem('potentialExpenses', JSON.stringify(updatedPotentialExpenses));
+        localStorage.setItem('expenses', JSON.stringify([...expenses, itemToMove]));
+    };
+
     const clearAllData = () => {
         setBalance(0);
         setExpenses([]);
         setIncomes([]);
+        setPotentialExpenses([]);
+        setPotentialIncomes([]);
         localStorage.removeItem('balance');
         localStorage.removeItem('expenses');
         localStorage.removeItem('incomes');
+        localStorage.removeItem('potentialIncomes');
+        localStorage.removeItem('potentialExpenses');
     };
 
-    // Funktion zum Löschen einer Einnahme
     const deleteIncome = (indexToDelete: number) => {
         const updatedIncomes = incomes.filter((_, index) => index !== indexToDelete);
-        setIncomes(updatedIncomes); // Update state
-        localStorage.setItem('incomes', JSON.stringify(updatedIncomes)); // Update Local Storage
+        setIncomes(updatedIncomes);
+        localStorage.setItem('incomes', JSON.stringify(updatedIncomes));
     };
 
-    // Funktion zum Löschen einer Ausgabe
     const deleteExpense = (indexToDelete: number) => {
         const updatedExpenses = expenses.filter((_, index) => index !== indexToDelete);
-        setExpenses(updatedExpenses); // Update state
-        localStorage.setItem('expenses', JSON.stringify(updatedExpenses)); // Update Local Storage
+        setExpenses(updatedExpenses);
+        localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
     };
 
+    const deletePotentialIncome = (indexToDelete: number) => {
+        const updatedIncomes = potentialIncomes.filter((_, index) => index !== indexToDelete);
+        setPotentialIncomes(updatedIncomes);
+        localStorage.setItem('potentialIncomes', JSON.stringify(updatedIncomes));
+    };
 
-    // Calculate total expenses
+    const deletePotentialExpense = (indexToDelete: number) => {
+        const updatedExpenses = potentialExpenses.filter((_, index) => index !== indexToDelete);
+        setPotentialExpenses(updatedExpenses);
+        localStorage.setItem('potentialExpenses', JSON.stringify(updatedExpenses));
+    };
+
+    /*  const handleSignOut = async () => {
+         try {
+             await doSignOut();
+             navigate('/login'); // Weiterleitung zur Login-Seite
+         } catch (error) {
+             console.error('Fehler beim Abmelden:', error);
+         }
+     }; */
+
+    // alte Berechnung
+    /*   const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
+      const totalIncomes = incomes.reduce((total, income) => total + income.amount, 0);
+      const remainingBalance = Math.round((balance + totalIncomes - totalExpenses) * 100) / 100; */
+
+    // neue Berechnung
+    // Berechnungen
     const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
-
-    // Calculate total incomes
     const totalIncomes = incomes.reduce((total, income) => total + income.amount, 0);
 
-    // Calculate the remaining balance
+    const potentialExpenseTotal = potentialExpenses.reduce((total, expense) => total + expense.amount, 0);
+    const potentialIncomeTotal = potentialIncomes.reduce((total, income) => total + income.amount, 0);
+
     const remainingBalance = Math.round((balance + totalIncomes - totalExpenses) * 100) / 100;
+    const projectedBalance = Math.round((remainingBalance + potentialIncomeTotal - potentialExpenseTotal) * 100) / 100;
+
+    useEffect(() => {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach((tooltipTriggerEl) => {
+            try {
+                new Tooltip(tooltipTriggerEl); // Tooltip instanziieren
+            } catch (error) {
+                console.error('Tooltip konnte nicht initialisiert werden:', error);
+            }
+        });
+    }, []);
 
     return (
         <div className="Finance">
-            <h2>Kontostand Management</h2>
-            <p>Zuletzt aktualisiert: {date}</p>
+            <>
+                {/**
+             * 
+             *    <p style={{ color: 'black' }}>{currentUser?.uid}</p>
+          
+                  <div className='text-2xl font-bold pt-14'>Hello {currentUser?.displayName ? currentUser.displayName : currentUser?.email}, you are now logged in.</div>
+             */}
+            </>
+
+            <h2>Trackwell - Easy & Fast Money-Tracking</h2>
+            {/*      <p>Zuletzt aktualisiert: {date}</p> */}
             <div>
-                <label>Kontostand: </label>
-                <input
-                    type="number"
-                    value={balance}
-                    onChange={(e) => {
-                        const newBalance = parseFloat(e.target.value);
-                        setBalance(newBalance);
-                        localStorage.setItem('balance', newBalance.toString());
-                    }}
-                />
-            </div>
-
-            <div className='forms'>
-
-                <div className='form'>
-                    <input
-                        type="text"
-                        placeholder="Einnahmen Name"
-                        value={incomeName}
-                        onChange={(e) => setIncomeName(e.target.value)}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Betrag"
-                        value={incomeAmount}
-                        onChange={(e) => setIncomeAmount(e.target.value)}
-                    />
-                    <button onClick={addIncome}>Einnahme hinzufügen</button>
-                </div>
-
-
-                <div className='form'>
-                    <input
-                        type="text"
-                        placeholder="Ausgaben Name"
-                        value={expenseName}
-                        onChange={(e) => setExpenseName(e.target.value)}
-                    />
+                <label data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title={"Kontostand beschreibt den Betrag, der aktuell auf deinem Bankkonto (z. B. Girokonto, Tagesgeld) verfügbar ist oder auch den Betrag, den du gerade zu Hause hast."}
+                    style={{ cursor: "pointer" }}>Kontostand (geändert am: {date}):</label>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <button
+                        onClick={() => {
+                            const newBalance = -balance;
+                            setBalance(newBalance);
+                            const currentDate = new Date().toLocaleString(); // Aktuelles Datum und Uhrzeit
+                            localStorage.setItem('balance', newBalance.toString());
+                            localStorage.setItem('balanceDate', currentDate); // Datum speichern
+                            setDate(currentDate); // Datum aktualisieren
+                        }}
+                        style={{
+                            padding: "4px 8px",
+                            fontSize: "12px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        ±
+                    </button>
                     <input
                         type="number"
-                        placeholder="Betrag"
-                        value={expenseAmount}
-                        onChange={(e) => setExpenseAmount(e.target.value)}
+                        value={balance}
+                        onChange={(e) => {
+                            const newBalance = parseFloat(e.target.value);
+                            if (!isNaN(newBalance)) {
+                                setBalance(newBalance);
+                                const currentDate = new Date().toLocaleString(); // Aktuelles Datum und Uhrzeit
+                                localStorage.setItem('balance', newBalance.toString());
+                                localStorage.setItem('balanceDate', currentDate); // Datum speichern
+                                setDate(currentDate); // Datum aktualisieren
+                            }
+                        }}
+                        style={{ flex: 1 }}
                     />
-                    <button onClick={addExpense}>Ausgabe hinzufügen</button>
                 </div>
-
+                {/* Datum anzeigen */}
+                {/*   <p style={{ marginTop: "10px", fontSize: "12px", color: "gray" }}>
+                    Letzte Änderung: {date}
+                </p> */}
             </div>
 
 
-            <h3>Einnahmen</h3>
+            <FormFinance
+                incomeName={incomeName}
+                expenseName={expenseName}
+                incomeAmount={incomeAmount}
+                expenseAmount={expenseAmount}
+                setIncomeName={setIncomeName}
+                setIncomeAmount={setIncomeAmount}
+                addIncome={addIncome}
+                setExpenseName={setExpenseName}
+                setExpenseAmount={setExpenseAmount}
+                addExpense={addExpense}
+
+                // Neue Props für voraussichtliche Einträge
+                potentialIncomeName={potentialIncomeName}
+                potentialExpenseName={potentialExpenseName}
+                potentialIncomeAmount={potentialIncomeAmount}
+                potentialExpenseAmount={potentialExpenseAmount}
+                setPotentialIncomeName={setPotentialIncomeName}
+                setPotentialIncomeAmount={setPotentialIncomeAmount}
+                addPotentialIncome={addPotentialIncome}
+                setPotentialExpenseName={setPotentialExpenseName}
+                setPotentialExpenseAmount={setPotentialExpenseAmount}
+                addPotentialExpense={addPotentialExpense}
+            />
+
+            <h3 className="section-heading mt-3">Einnahmen</h3>
             <ul>
                 {incomes.map((income, index) => (
                     <li key={index}>
@@ -166,9 +292,8 @@ function Finance() {
                     </li>
                 ))}
             </ul>
-            {/*<h3>Gesamtsumme der Einnahmen: {totalIncomes}€</h3> */}
 
-            <h3>Vorraussichtliche Ausgaben</h3>
+            <h3 className="section-heading">Ausgaben</h3>
             <ul>
                 {expenses.map((expense, index) => (
                     <li key={index}>
@@ -177,11 +302,129 @@ function Finance() {
                     </li>
                 ))}
             </ul>
-            {/* <h3>Gesamtsumme der Ausgaben: {totalExpenses}€</h3> */}
-            <h3>Neuer Kontostand: {remainingBalance}€</h3>
-            <button onClick={clearAllData} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white' }}>
-                Alle Daten löschen
+
+            <button
+                onClick={() => setShowPotentials(!showPotentials)} // Umschalten
+                style={{
+                    marginTop: '3px',
+                    backgroundColor: '#dcdcdc',
+                    color: 'black',
+                    padding: '10px 20px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                }}
+            >
+                {showPotentials ? 'Geplante Ein-/Ausgaben ausblenden' : 'Geplante Ein-/Ausgaben anzeigen'}
             </button>
+
+
+            {showPotentials && (
+                <>
+                    <h3 className="section-heading mt-3">Geplante Einnahmen</h3>
+                    <ul>
+                        {potentialIncomes.map((income, index) => (
+
+                            <li key={index}>
+                                <button onClick={() => deletePotentialIncome(index)} className="delete-button">x</button>
+                                {income.name}: {income.amount}€
+                                <button
+                                    onClick={() => movePotentialIncomeToIncome(index)}
+                                    style={{
+                                        marginLeft: "10px",
+                                        backgroundColor: "green",
+                                        color: "white",
+                                        padding: "5px 10px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    In Einnahmen verschieben
+                                </button>
+
+                            </li>
+                        ))}
+                    </ul>
+
+                    <h3 className="section-heading">Geplante Ausgaben</h3>
+                    <ul>
+                        {potentialExpenses.map((expense, index) => (
+                            <li key={index}>
+                                <button onClick={() => deletePotentialExpense(index)} className="delete-button">x</button>
+                                {expense.name}: {expense.amount}€
+                                <button
+                                    onClick={() => movePotentialExpenseToExpense(index)}
+                                    style={{
+                                        marginLeft: "10px",
+                                        backgroundColor: "green",
+                                        color: "white",
+                                        padding: "5px 10px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    In Ausgaben verschieben
+                                </button>
+
+                            </li>
+                        ))}
+                    </ul>
+
+
+                </>
+            )}
+
+            {/*   <hr /> */}
+            <div
+                style={{
+                    backgroundColor: "black", // Schwarzer Hintergrund
+                    color: "white",           // Standard-Textfarbe
+                    padding: "20px",          // Innenabstand
+                    borderRadius: "10px",     // Abgerundete Ecken
+                    marginTop: "20px",        // Abstand nach oben
+                }}
+            >
+                <h3
+                    style={{
+                        marginBottom: "10px",
+                        color: remainingBalance < 0 ? "red" : "white", // Rot, wenn negativ; Weiß, wenn positiv
+                    }}
+                >
+                    Neuer Kontostand: {remainingBalance}€
+                </h3>
+
+                {showPotentials && (
+                    <h3
+                        style={{
+                            marginBottom: "10px",
+                            color: projectedBalance < 0 ? "red" : "white", // Rot, wenn negativ; Weiß, wenn positiv
+                        }}
+                    >
+                        Voraussichtlicher Kontostand: {projectedBalance}€
+                    </h3>
+                )}
+            </div>
+
+            <button
+                onClick={clearAllData}
+                style={{
+                    marginTop: "10px",
+                    backgroundColor: "red",
+                    color: "white",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                }}
+            >
+                Alles löschen
+            </button>
+
+            {/*   <button onClick={handleSignOut} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white', marginLeft: '20px' }}>
+                Abmelden
+            </button> */}
         </div>
     );
 }

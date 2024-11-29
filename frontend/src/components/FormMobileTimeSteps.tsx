@@ -1,4 +1,4 @@
-import React from "react";
+/* import React from "react";
 
 const { useEffect, useState } = React;
 
@@ -34,8 +34,6 @@ export default function FormMobileTimeSteps() {
         const h = await response.json()
     }
 
-
-
     return (
         <div>
             <h1>Form</h1>
@@ -57,4 +55,4 @@ export default function FormMobileTimeSteps() {
             </div>
         </div>
     )
-}
+} */

@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
-import '../app.css';
+/* import { useState, useEffect, useMemo } from "react";
+import '../App.css';
 import { AxisOptions, Chart } from "react-charts";
 import ResizableBox from "../components/ResizableBox";
 import FormMobileTimeSteps from "../components/FormMobileTimeSteps";
@@ -91,7 +91,7 @@ function Home() {
       <h3>Mobile Time and Steps over Time</h3>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
        
-        {/* Resizable Box with the Chart */}
+      
         <ResizableBox style={{ width: '600px', height: '400px', backgroundColor: 'lightgrey' }}>
           <Chart
             options={{
@@ -110,3 +110,4 @@ function Home() {
 }
 
 export default Home;
+ */
