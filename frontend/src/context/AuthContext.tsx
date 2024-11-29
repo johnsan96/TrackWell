@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, ReactNode } from "react";
+/* import React, { useEffect, useState, useContext, ReactNode } from "react";
 import { auth } from "../../firebase/firebaseConfig";
 import { onAuthStateChanged, User } from "firebase/auth";
 
@@ -75,3 +75,4 @@ export function AuthProvider({ children }: AuthProviderProps) {
     </AuthContext.Provider>
   );
 }
+ */

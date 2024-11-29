@@ -16,4 +16,7 @@ export default defineConfig({
     host: "0.0.0.0", // Damit der Server auf allen Netzwerk-Schnittstellen hört
     port: 5173, // Der Standard-Port für Vite
   },
+  preview: {
+    port: 5173, // Port für den Preview-Server ändern
+  },
 });

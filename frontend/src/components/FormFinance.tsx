@@ -58,7 +58,7 @@ export default function FormFinance({
                 <div className="forms row">
 
                     {/* Normale Einnahmen */}
-                    <div className="col-12 col-md-6 mb-3">
+                    <div /* className="col-12 col-md-6 mb-3" */ className="mt-3">
                         <div className="form">
                             <input
                                 type="text"
@@ -77,7 +77,7 @@ export default function FormFinance({
                     </div>
 
                     {/* Normale Ausgaben */}
-                    <div className="col-12 col-md-6 mb-3 mt-3">
+                    <div /* className="col-12 col-md-6 mb-3 mt-3" */>
                         <div className="form">
                             <input
                                 type="text"
@@ -116,7 +116,7 @@ export default function FormFinance({
                     {showPotentials && (
                         <>
                             {/* Voraussichtliche Einnahmen */}
-                            <div className="col-12 col-md-6 mb-3 mt-3">
+                            <div /* className="col-12 col-md-6 mb-3 mt-3" */>
                                 <div className="form">
                                     <input
                                         type="text"
@@ -135,7 +135,7 @@ export default function FormFinance({
                             </div>
 
                             {/* Voraussichtliche Ausgaben */}
-                            <div className="col-12 col-md-6 mb-3 mt-3">
+                            <div /* className="col-12 col-md-6 mb-3 mt-3" */>
                                 <div className="form">
                                     <input
                                         type="text"

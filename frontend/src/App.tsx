@@ -1,10 +1,10 @@
 import Finance from './pages/Finance';
-import { Test } from './pages/Test';
+/* import { Test } from './pages/Test';
 import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import ProtectedRoute from './ProtectedRoute';
 import { Navigate, Outlet, useRoutes } from "react-router-dom";
-import Register from './pages/Register';
+import Register from './pages/Register'; */
 
 const App = () => {
   /* onst routesArray = [

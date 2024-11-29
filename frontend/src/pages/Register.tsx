@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+/* import React, { useState } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { doCreateUserWithEmailAndPassword } from '../../firebase/auth'
@@ -101,4 +101,4 @@ const Register = () => {
     )
 }
 
-export default Register
+export default Register */

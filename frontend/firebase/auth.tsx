@@ -1,4 +1,4 @@
-import { auth } from "./firebaseConfig";
+/* import { auth } from "./firebaseConfig";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -43,4 +43,4 @@ export const doSendEmailVerification = () => {
   return sendEmailVerification(auth.currentUser, {
     url: `${window.location.origin}/home`,
   });
-};
+}; */

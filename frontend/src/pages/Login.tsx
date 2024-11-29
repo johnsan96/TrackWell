@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+/* import React, { useState } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { doSignInWithEmailAndPassword, doSignInWithGoogle, doSendEmailVerification } from '../../firebase/auth'
 import { useAuth } from '../context/AuthContext'
@@ -114,4 +114,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Login */

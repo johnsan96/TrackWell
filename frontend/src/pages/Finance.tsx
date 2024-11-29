@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import './Finance.css';
 import FormFinance from '../components/FormFinance';
-import { useAuth } from '../context/AuthContext';
+/* import { useAuth } from '../context/AuthContext';
 import { doSignOut } from '../../firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; */
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import { Tooltip } from 'bootstrap';
 
 interface Transaction {
     name: string;
@@ -185,6 +188,17 @@ function Finance() {
     const remainingBalance = Math.round((balance + totalIncomes - totalExpenses) * 100) / 100;
     const projectedBalance = Math.round((remainingBalance + potentialIncomeTotal - potentialExpenseTotal) * 100) / 100;
 
+    useEffect(() => {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach((tooltipTriggerEl) => {
+            try {
+                new Tooltip(tooltipTriggerEl); // Tooltip instanziieren
+            } catch (error) {
+                console.error('Tooltip konnte nicht initialisiert werden:', error);
+            }
+        });
+    }, []);
+
     return (
         <div className="Finance">
             <>
@@ -196,20 +210,27 @@ function Finance() {
              */}
             </>
 
-            <h2>Budget-Management</h2>
+            <h2>Trackwell - Easy & Fast Money-Tracking</h2>
             {/*      <p>Zuletzt aktualisiert: {date}</p> */}
             <div>
-                <label>Kontostand: </label>
+                <label data-bs-toggle="tooltip"
+                    data-bs-placement="top"
+                    title={"Kontostand beschreibt den Betrag, der aktuell auf deinem Bankkonto (z. B. Girokonto, Tagesgeld) verfügbar ist oder auch den Betrag, den du gerade zu Hause hast."}
+                    style={{ cursor: "pointer" }}>Kontostand (geändert am: {date}):</label>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <button
                         onClick={() => {
-                            setBalance(-balance);
-                            localStorage.setItem('balance', (-balance).toString());
+                            const newBalance = -balance;
+                            setBalance(newBalance);
+                            const currentDate = new Date().toLocaleString(); // Aktuelles Datum und Uhrzeit
+                            localStorage.setItem('balance', newBalance.toString());
+                            localStorage.setItem('balanceDate', currentDate); // Datum speichern
+                            setDate(currentDate); // Datum aktualisieren
                         }}
                         style={{
-                            padding: "4px 8px", // Größe anpassen
-                            fontSize: "12px",   // Kleinere Schrift
-                            cursor: "pointer"   // Zeigt Klickbarkeit
+                            padding: "4px 8px",
+                            fontSize: "12px",
+                            cursor: "pointer",
                         }}
                     >
                         ±
@@ -221,13 +242,21 @@ function Finance() {
                             const newBalance = parseFloat(e.target.value);
                             if (!isNaN(newBalance)) {
                                 setBalance(newBalance);
+                                const currentDate = new Date().toLocaleString(); // Aktuelles Datum und Uhrzeit
                                 localStorage.setItem('balance', newBalance.toString());
+                                localStorage.setItem('balanceDate', currentDate); // Datum speichern
+                                setDate(currentDate); // Datum aktualisieren
                             }
                         }}
-                        style={{ flex: 1 }} // Eingabefeld nimmt den Rest des Platzes ein
+                        style={{ flex: 1 }}
                     />
                 </div>
+                {/* Datum anzeigen */}
+                {/*   <p style={{ marginTop: "10px", fontSize: "12px", color: "gray" }}>
+                    Letzte Änderung: {date}
+                </p> */}
             </div>
+
 
             <FormFinance
                 incomeName={incomeName}
@@ -254,7 +283,7 @@ function Finance() {
                 addPotentialExpense={addPotentialExpense}
             />
 
-            <h3 className="section-heading">Einnahmen</h3>
+            <h3 className="section-heading mt-3">Einnahmen</h3>
             <ul>
                 {incomes.map((income, index) => (
                     <li key={index}>
@@ -277,7 +306,7 @@ function Finance() {
             <button
                 onClick={() => setShowPotentials(!showPotentials)} // Umschalten
                 style={{
-                    marginTop: '20px',
+                    marginTop: '3px',
                     backgroundColor: '#dcdcdc',
                     color: 'black',
                     padding: '10px 20px',
@@ -292,7 +321,7 @@ function Finance() {
 
             {showPotentials && (
                 <>
-                    <h3 className="section-heading">Geplante Einnahmen</h3>
+                    <h3 className="section-heading mt-3">Geplante Einnahmen</h3>
                     <ul>
                         {potentialIncomes.map((income, index) => (
 
@@ -390,7 +419,7 @@ function Finance() {
                     cursor: "pointer",
                 }}
             >
-                Alles löschen?
+                Alles löschen
             </button>
 
             {/*   <button onClick={handleSignOut} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white', marginLeft: '20px' }}>
