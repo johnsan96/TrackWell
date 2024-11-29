@@ -13,26 +13,37 @@ interface Transaction {
 function Finance() {
     const [balance, setBalance] = useState<number>(0);
 
+    // Normale Einnahmen und Ausgaben
     const [expenses, setExpenses] = useState<Transaction[]>([]);
-
     const [incomes, setIncomes] = useState<Transaction[]>([]);
+
+    // Voraussichtliche Einnahmen und Ausgaben
+    const [potentialExpenses, setPotentialExpenses] = useState<Transaction[]>([]);
+    const [potentialIncomes, setPotentialIncomes] = useState<Transaction[]>([]);
 
     const [expenseName, setExpenseName] = useState<string>('');
     const [expenseAmount, setExpenseAmount] = useState<string>('');
-
     const [incomeName, setIncomeName] = useState<string>('');
     const [incomeAmount, setIncomeAmount] = useState<string>('');
 
+    const [potentialExpenseName, setPotentialExpenseName] = useState<string>('');
+    const [potentialExpenseAmount, setPotentialExpenseAmount] = useState<string>('');
+    const [potentialIncomeName, setPotentialIncomeName] = useState<string>('');
+    const [potentialIncomeAmount, setPotentialIncomeAmount] = useState<string>('');
+
+    const [showPotentials, setShowPotentials] = useState<boolean>(false);
     const [date, setDate] = useState<string>(new Date().toLocaleDateString());
 
-/*     const { currentUser } = useAuth() */
+    /*     const { currentUser } = useAuth() */
 
-/*     const navigate = useNavigate(); */
+    /*     const navigate = useNavigate(); */
 
     useEffect(() => {
         const storedBalance = localStorage.getItem('balance');
         const storedExpenses = localStorage.getItem('expenses');
         const storedIncomes = localStorage.getItem('incomes');
+        const storedPotentialExpenses = localStorage.getItem('potentialExpenses');
+        const storedPotentialIncomes = localStorage.getItem('potentialIncomes');
 
         if (storedBalance) {
             setBalance(parseFloat(storedBalance));
@@ -43,6 +54,8 @@ function Finance() {
         if (storedIncomes) {
             setIncomes(JSON.parse(storedIncomes));
         }
+        if (storedPotentialExpenses) setPotentialExpenses(JSON.parse(storedPotentialExpenses));
+        if (storedPotentialIncomes) setPotentialIncomes(JSON.parse(storedPotentialIncomes));
     }, []);
 
     const addExpense = () => {
@@ -67,13 +80,60 @@ function Finance() {
         }
     };
 
+    // Hinzufügen von voraussichtlichen Einnahmen/Ausgaben
+    const addPotentialExpense = () => {
+        if (potentialExpenseName && potentialExpenseAmount) {
+            const newExpense = { name: potentialExpenseName, amount: parseFloat(potentialExpenseAmount) };
+            const updatedExpenses = [...potentialExpenses, newExpense];
+            setPotentialExpenses(updatedExpenses);
+            localStorage.setItem('potentialExpenses', JSON.stringify(updatedExpenses));
+            setPotentialExpenseName('');
+            setPotentialExpenseAmount('');
+        }
+    };
+
+    const addPotentialIncome = () => {
+        if (potentialIncomeName && potentialIncomeAmount) {
+            const newIncome = { name: potentialIncomeName, amount: parseFloat(potentialIncomeAmount) };
+            const updatedIncomes = [...potentialIncomes, newIncome];
+            setPotentialIncomes(updatedIncomes);
+            localStorage.setItem('potentialIncomes', JSON.stringify(updatedIncomes));
+            setPotentialIncomeName('');
+            setPotentialIncomeAmount('');
+        }
+    };
+
+    const movePotentialIncomeToIncome = (indexToMove: number) => {
+        const itemToMove = potentialIncomes[indexToMove];
+        const updatedPotentialIncomes = potentialIncomes.filter((_, index) => index !== indexToMove);
+        setPotentialIncomes(updatedPotentialIncomes);
+        setIncomes([...incomes, itemToMove]);
+
+        localStorage.setItem('potentialIncomes', JSON.stringify(updatedPotentialIncomes));
+        localStorage.setItem('incomes', JSON.stringify([...incomes, itemToMove]));
+    };
+
+    const movePotentialExpenseToExpense = (indexToMove: number) => {
+        const itemToMove = potentialExpenses[indexToMove];
+        const updatedPotentialExpenses = potentialExpenses.filter((_, index) => index !== indexToMove);
+        setPotentialExpenses(updatedPotentialExpenses);
+        setExpenses([...expenses, itemToMove]);
+
+        localStorage.setItem('potentialExpenses', JSON.stringify(updatedPotentialExpenses));
+        localStorage.setItem('expenses', JSON.stringify([...expenses, itemToMove]));
+    };
+
     const clearAllData = () => {
         setBalance(0);
         setExpenses([]);
         setIncomes([]);
+        setPotentialExpenses([]);
+        setPotentialIncomes([]);
         localStorage.removeItem('balance');
         localStorage.removeItem('expenses');
         localStorage.removeItem('incomes');
+        localStorage.removeItem('potentialIncomes');
+        localStorage.removeItem('potentialExpenses');
     };
 
     const deleteIncome = (indexToDelete: number) => {
@@ -88,18 +148,42 @@ function Finance() {
         localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
     };
 
-   /*  const handleSignOut = async () => {
-        try {
-            await doSignOut();
-            navigate('/login'); // Weiterleitung zur Login-Seite
-        } catch (error) {
-            console.error('Fehler beim Abmelden:', error);
-        }
-    }; */
+    const deletePotentialIncome = (indexToDelete: number) => {
+        const updatedIncomes = potentialIncomes.filter((_, index) => index !== indexToDelete);
+        setPotentialIncomes(updatedIncomes);
+        localStorage.setItem('potentialIncomes', JSON.stringify(updatedIncomes));
+    };
 
+    const deletePotentialExpense = (indexToDelete: number) => {
+        const updatedExpenses = potentialExpenses.filter((_, index) => index !== indexToDelete);
+        setPotentialExpenses(updatedExpenses);
+        localStorage.setItem('potentialExpenses', JSON.stringify(updatedExpenses));
+    };
+
+    /*  const handleSignOut = async () => {
+         try {
+             await doSignOut();
+             navigate('/login'); // Weiterleitung zur Login-Seite
+         } catch (error) {
+             console.error('Fehler beim Abmelden:', error);
+         }
+     }; */
+
+    // alte Berechnung
+    /*   const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
+      const totalIncomes = incomes.reduce((total, income) => total + income.amount, 0);
+      const remainingBalance = Math.round((balance + totalIncomes - totalExpenses) * 100) / 100; */
+
+    // neue Berechnung
+    // Berechnungen
     const totalExpenses = expenses.reduce((total, expense) => total + expense.amount, 0);
     const totalIncomes = incomes.reduce((total, income) => total + income.amount, 0);
+
+    const potentialExpenseTotal = potentialExpenses.reduce((total, expense) => total + expense.amount, 0);
+    const potentialIncomeTotal = potentialIncomes.reduce((total, income) => total + income.amount, 0);
+
     const remainingBalance = Math.round((balance + totalIncomes - totalExpenses) * 100) / 100;
+    const projectedBalance = Math.round((remainingBalance + potentialIncomeTotal - potentialExpenseTotal) * 100) / 100;
 
     return (
         <div className="Finance">
@@ -113,7 +197,7 @@ function Finance() {
             </>
 
             <h2>Budget-Management</h2>
-       {/*      <p>Zuletzt aktualisiert: {date}</p> */}
+            {/*      <p>Zuletzt aktualisiert: {date}</p> */}
             <div>
                 <label>Kontostand: </label>
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -156,9 +240,21 @@ function Finance() {
                 setExpenseName={setExpenseName}
                 setExpenseAmount={setExpenseAmount}
                 addExpense={addExpense}
+
+                // Neue Props für voraussichtliche Einträge
+                potentialIncomeName={potentialIncomeName}
+                potentialExpenseName={potentialExpenseName}
+                potentialIncomeAmount={potentialIncomeAmount}
+                potentialExpenseAmount={potentialExpenseAmount}
+                setPotentialIncomeName={setPotentialIncomeName}
+                setPotentialIncomeAmount={setPotentialIncomeAmount}
+                addPotentialIncome={addPotentialIncome}
+                setPotentialExpenseName={setPotentialExpenseName}
+                setPotentialExpenseAmount={setPotentialExpenseAmount}
+                addPotentialExpense={addPotentialExpense}
             />
 
-            <h3>Einnahmen</h3>
+            <h3 className="section-heading">Einnahmen</h3>
             <ul>
                 {incomes.map((income, index) => (
                     <li key={index}>
@@ -168,7 +264,7 @@ function Finance() {
                 ))}
             </ul>
 
-            <h3>Vorraussichtliche Ausgaben</h3>
+            <h3 className="section-heading">Ausgaben</h3>
             <ul>
                 {expenses.map((expense, index) => (
                     <li key={index}>
@@ -177,12 +273,127 @@ function Finance() {
                     </li>
                 ))}
             </ul>
-            <h3>Neuer Kontostand: {remainingBalance}€</h3>
-            <button onClick={clearAllData} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white' }}>
-                Alle Daten löschen
+
+            <button
+                onClick={() => setShowPotentials(!showPotentials)} // Umschalten
+                style={{
+                    marginTop: '20px',
+                    backgroundColor: '#dcdcdc',
+                    color: 'black',
+                    padding: '10px 20px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer',
+                }}
+            >
+                {showPotentials ? 'Geplante Ein-/Ausgaben ausblenden' : 'Geplante Ein-/Ausgaben anzeigen'}
             </button>
 
-          {/*   <button onClick={handleSignOut} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white', marginLeft: '20px' }}>
+
+            {showPotentials && (
+                <>
+                    <h3 className="section-heading">Geplante Einnahmen</h3>
+                    <ul>
+                        {potentialIncomes.map((income, index) => (
+
+                            <li key={index}>
+                                <button onClick={() => deletePotentialIncome(index)} className="delete-button">x</button>
+                                {income.name}: {income.amount}€
+                                <button
+                                    onClick={() => movePotentialIncomeToIncome(index)}
+                                    style={{
+                                        marginLeft: "10px",
+                                        backgroundColor: "green",
+                                        color: "white",
+                                        padding: "5px 10px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    In Einnahmen verschieben
+                                </button>
+
+                            </li>
+                        ))}
+                    </ul>
+
+                    <h3 className="section-heading">Geplante Ausgaben</h3>
+                    <ul>
+                        {potentialExpenses.map((expense, index) => (
+                            <li key={index}>
+                                <button onClick={() => deletePotentialExpense(index)} className="delete-button">x</button>
+                                {expense.name}: {expense.amount}€
+                                <button
+                                    onClick={() => movePotentialExpenseToExpense(index)}
+                                    style={{
+                                        marginLeft: "10px",
+                                        backgroundColor: "green",
+                                        color: "white",
+                                        padding: "5px 10px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                    }}
+                                >
+                                    In Ausgaben verschieben
+                                </button>
+
+                            </li>
+                        ))}
+                    </ul>
+
+
+                </>
+            )}
+
+            {/*   <hr /> */}
+            <div
+                style={{
+                    backgroundColor: "black", // Schwarzer Hintergrund
+                    color: "white",           // Standard-Textfarbe
+                    padding: "20px",          // Innenabstand
+                    borderRadius: "10px",     // Abgerundete Ecken
+                    marginTop: "20px",        // Abstand nach oben
+                }}
+            >
+                <h3
+                    style={{
+                        marginBottom: "10px",
+                        color: remainingBalance < 0 ? "red" : "white", // Rot, wenn negativ; Weiß, wenn positiv
+                    }}
+                >
+                    Neuer Kontostand: {remainingBalance}€
+                </h3>
+
+                {showPotentials && (
+                    <h3
+                        style={{
+                            marginBottom: "10px",
+                            color: projectedBalance < 0 ? "red" : "white", // Rot, wenn negativ; Weiß, wenn positiv
+                        }}
+                    >
+                        Voraussichtlicher Kontostand: {projectedBalance}€
+                    </h3>
+                )}
+            </div>
+
+            <button
+                onClick={clearAllData}
+                style={{
+                    marginTop: "10px",
+                    backgroundColor: "red",
+                    color: "white",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                }}
+            >
+                Alles löschen?
+            </button>
+
+            {/*   <button onClick={handleSignOut} style={{ marginTop: '20px', backgroundColor: 'red', color: 'white', marginLeft: '20px' }}>
                 Abmelden
             </button> */}
         </div>

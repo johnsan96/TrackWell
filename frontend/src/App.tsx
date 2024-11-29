@@ -48,14 +48,26 @@ const App = () => {
   
 
     let routesElement = useRoutes(routesArray); */
-    
-    return (
+
+  return (
     /*   <AuthProvider>
         <div className="w-full h-screen flex flex-col">{Finance}</div>
       </AuthProvider> */
-
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center', // Zentriert horizontal
+        alignItems: 'center', // Zentriert vertikal
+        minHeight: '100vh', // Volle Höhe des Viewports
+        backgroundColor: '#f0f4f8', // Hintergrundfarbe der App
+        margin: 0,
+      }}
+    >
       <Finance />
-    );
+    </div>
+
+
+  );
 };
 
 export default App;
