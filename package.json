@@ -1,7 +1,6 @@
 {
   "name": "frontend-for-trackwell",
-  "homepage": "https://johnsan96.github.io/TrackWell",
-  "private": true,
+  "private": false,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
